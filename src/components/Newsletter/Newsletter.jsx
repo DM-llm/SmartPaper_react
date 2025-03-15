@@ -1,14 +1,18 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { SlideUp } from "../../animation/animate";
-import { createOpenAIClient } from "../../api/openai-client";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import remarkMath from "remark-math";
+import rehypeKatex from "rehype-katex";
+import "katex/dist/katex.min.css";
 
 const Newsletter = () => {
   const [inputUrl, setInputUrl] = useState('');
   const [responseContent, setResponseContent] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+
+  const mathFormula = "$$\n\\begin{bmatrix}\n\\dot{x} \\\\\n\\ddot{x} \\\\\n\\dot{\\phi} \\\\\n\\ddot{\\phi}\n\\end{bmatrix}\n=\n\\begin{bmatrix}\n0 & 1 & 0 & 0 \\\\\n0 & -\\frac{(l + m_1 l^2) r_f}{(m_1 + m_2) l + m_1 m_2 l^2} & 0 & \\frac{m_1^2 g l^2}{(m_1 + m_2) l + m_1 m_2 l^2} \\\\\n0 & 0 & 0 & 0 \\\\\n0 & \\frac{m_1 l r_f}{(m_1 + m_2) l + m_1 m_2 l^2} & 0 & \\frac{m_1 g l (m_1 + m_2)}{(m_1 + m_2) l + m_1 m_2 l^2}\n\\end{bmatrix}\n\\begin{bmatrix}\nx \\\\\n\\dot{x} \\\\\n\\phi \\\\\n\\dot{\\phi}\n\\end{bmatrix}\n+\n\\begin{bmatrix}\n0 \\\\\n\\frac{(l + m_1 l^2)}{(m_1 + m_2) l + m_1 m_2 l^2} \\\\\n0 \\\\\n\\frac{m_1 l}{(m_1 + m_2) l + m_1 m_2 l^2}\n\\end{bmatrix}\nu\n$$";
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -16,23 +20,14 @@ const Newsletter = () => {
     setResponseContent('');
 
     try {
-      const openai = createOpenAIClient();
-      const stream = await openai.chat.completions.create({
-        messages: [
-          { role: 'system', content: '你是一份智能论文分析助手' },
-          { role: 'user', content: `请分析这篇论文：${inputUrl}` }
-        ],
-        model: 'ep-20250314002155-k6w6f',
-        stream: true,
-      });
-
-      for await (const chunk of stream) {
-        const content = chunk.choices[0]?.delta?.content || '';
-        setResponseContent(prev => prev + content);
+      const characters = mathFormula.split('');
+      for (let i = 0; i < characters.length; i++) {
+        await new Promise(resolve => setTimeout(resolve, 50));
+        setResponseContent(prev => prev + characters[i]);
       }
     } catch (error) {
-      console.error('API请求失败:', error);
-      setResponseContent('分析失败，请重试');
+      console.error('流式输出失败:', error);
+      setResponseContent('输出失败，请重试');
     } finally {
       setIsLoading(false);
     }
@@ -93,7 +88,8 @@ const Newsletter = () => {
           className="mt-8 p-6 bg-gray-50 rounded-lg w-full max-w-[640px] mx-auto"
         >
           <ReactMarkdown 
-            remarkPlugins={[remarkGfm]}
+            remarkPlugins={[remarkGfm, remarkMath]}
+            rehypePlugins={[rehypeKatex]}
             components={{
               // 定义自定义组件来应用样式
               p: ({node, ...props}) => <p className="prose prose-sm max-w-none" {...props} />
