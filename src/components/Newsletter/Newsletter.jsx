@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { SlideUp } from "../../animation/animate";
 import ReactMarkdown from "react-markdown";
@@ -6,13 +6,14 @@ import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
 import "katex/dist/katex.min.css";
+import { processPaperUrlStream } from "../../services/api.js";
 
 const Newsletter = () => {
   const [inputUrl, setInputUrl] = useState('');
   const [responseContent, setResponseContent] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-
-  const mathFormula = "$$\n\\begin{bmatrix}\n\\dot{x} \\\\\n\\ddot{x} \\\\\n\\dot{\\phi} \\\\\n\\ddot{\\phi}\n\\end{bmatrix}\n=\n\\begin{bmatrix}\n0 & 1 & 0 & 0 \\\\\n0 & -\\frac{(l + m_1 l^2) r_f}{(m_1 + m_2) l + m_1 m_2 l^2} & 0 & \\frac{m_1^2 g l^2}{(m_1 + m_2) l + m_1 m_2 l^2} \\\\\n0 & 0 & 0 & 0 \\\\\n0 & \\frac{m_1 l r_f}{(m_1 + m_2) l + m_1 m_2 l^2} & 0 & \\frac{m_1 g l (m_1 + m_2)}{(m_1 + m_2) l + m_1 m_2 l^2}\n\\end{bmatrix}\n\\begin{bmatrix}\nx \\\\\n\\dot{x} \\\\\n\\phi \\\\\n\\dot{\\phi}\n\\end{bmatrix}\n+\n\\begin{bmatrix}\n0 \\\\\n\\frac{(l + m_1 l^2)}{(m_1 + m_2) l + m_1 m_2 l^2} \\\\\n0 \\\\\n\\frac{m_1 l}{(m_1 + m_2) l + m_1 m_2 l^2}\n\\end{bmatrix}\nu\n$$";
+  const [promptName, setPromptName] = useState('yuanbao');
+  const [prompts, setPrompts] = useState([]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -20,10 +21,12 @@ const Newsletter = () => {
     setResponseContent('');
 
     try {
-      const characters = mathFormula.split('');
-      for (let i = 0; i < characters.length; i++) {
-        await new Promise(resolve => setTimeout(resolve, 50));
-        setResponseContent(prev => prev + characters[i]);
+      const stream = await processPaperUrlStream(inputUrl, promptName);
+      
+      while (true) {
+        const { done, content } = await stream.read();
+        if (done) break;
+        setResponseContent(prev => prev + content);
       }
     } catch (error) {
       console.error('流式输出失败:', error);
@@ -60,14 +63,26 @@ const Newsletter = () => {
       >
         <form onSubmit={handleSubmit} className="w-full max-w-[640px] mx-auto">
           <div className="flex border-2 border-black">
-            <input
-              type="text"
-              value={inputUrl}
-              onChange={(e) => setInputUrl(e.target.value)}
-              placeholder="输入arXiv论文URL"
-              className="w-full px-4 py-3 outline-none border-none"
-              disabled={isLoading}
-            />
+            <div className="flex-grow">
+              <input
+                type="text"
+                value={inputUrl}
+                onChange={(e) => setInputUrl(e.target.value)}
+                placeholder="输入arXiv论文URL"
+                className="w-full px-4 py-3 outline-none border-none"
+                disabled={isLoading}
+              />
+              <select
+                value={promptName}
+                onChange={(e) => setPromptName(e.target.value)}
+                className="w-full px-4 py-2 mt-2 border border-gray-200 outline-none"
+                disabled={isLoading}
+              >
+                <option value="yuanbao">元宝模板</option>
+                <option value="summary">摘要模板</option>
+                <option value="coolpapers">酷论文模板</option>
+              </select>
+            </div>
             <button 
               type="submit"
               className="bg-black text-white px-10 py-3 text-lg font-medium"
