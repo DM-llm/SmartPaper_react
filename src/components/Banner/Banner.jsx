@@ -25,7 +25,7 @@ const Banner = () => {
               variants={SlideUp(0.2)}
               initial="initial"
               whileInView="animate"
-              className="text-4xl font-bold font-serif"
+              className="text-4xl font-bold"
             >
               We Believe that a team makes any project better
             </motion.h1>

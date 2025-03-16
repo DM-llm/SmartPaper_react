@@ -37,7 +37,7 @@ const Testimonial = () => {
           variants={SlideUp(0.2)}
           initial="initial"
           whileInView="animate"
-          className="text-4xl font-bold font-serif"
+          className="text-4xl font-bold"
         >
           Words from our coustomers
         </motion.h1>

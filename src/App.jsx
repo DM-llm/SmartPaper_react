@@ -1,29 +1,20 @@
 import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar/Navbar";
-import Hero from "./components/Hero/Hero";
-import Brands from "./components/Brands/Brands";
-import Services from "./components/Services/Services";
-import Banner from "./components/Banner/Banner";
-import Banner2 from "./components/Banner/Banner2";
-import Testimonial from "./components/Testimonial/Testimonial";
-import Newsletter from "./components/Newsletter/Newsletter";
-import Footer from "./components/Footer/Footer";
-import FetchShowcase from "./components/FetchShowcase/FetchShowcase";
+import Home from "./pages/Home";
+import Experience from "./pages/Experience";
 
 const App = () => {
   return (
-    <main className="overflow-x-hidden">
-      <Navbar />
-      <Newsletter />
-      <Hero />
-      <Brands />
-      <Services />
-      <Banner />
-      <FetchShowcase />
-      <Banner2 />
-      <Testimonial />
-      <Footer />
-    </main>
+    <Router>
+      <main className="bg-gray-50">
+        <Navbar />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/experience" element={<Experience />} />
+        </Routes>
+      </main>
+    </Router>
   );
 };
 

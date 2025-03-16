@@ -7,6 +7,8 @@ import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
 import "katex/dist/katex.min.css";
 import { processPaperUrlStream } from "../../services/api.js";
+// 导入图标
+import { FiFileText, FiArrowRight, FiLoader } from "react-icons/fi";
 
 const Newsletter = () => {
   const [inputUrl, setInputUrl] = useState('');
@@ -37,12 +39,12 @@ const Newsletter = () => {
   };
 
   return (
-    <div className="max-w-[700px] mx-auto space-y-5 py-8 min-h-screen flex flex-col justify-start pt-20">
+    <div className="max-w-[700px] mx-auto space-y-5 py-16 flex flex-col justify-start pt-20 pb-20">
       <motion.h1
         variants={SlideUp(0.2)}
         initial="initial"
         whileInView="animate"
-        className="text-3xl font-bold font-serif text-center"
+        className="text-3xl font-bold text-center"
       >
         SmartPaper
       </motion.h1>
@@ -62,30 +64,32 @@ const Newsletter = () => {
         className="!mt-8"
       >
         <form onSubmit={handleSubmit} className="w-full max-w-[640px] mx-auto">
-          <div className="flex border-2 border-black">
+          <div className="flex flex-col border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 bg-white">
             <div className="flex-grow">
               <input
                 type="text"
                 value={inputUrl}
                 onChange={(e) => setInputUrl(e.target.value)}
                 placeholder="输入arXiv论文URL"
-                className="w-full px-4 py-3 outline-none border-none"
+                className="w-full px-5 py-4 outline-none border-none text-gray-800"
                 disabled={isLoading}
               />
-              <select
-                value={promptName}
-                onChange={(e) => setPromptName(e.target.value)}
-                className="w-full px-4 py-2 mt-2 border border-gray-200 outline-none"
-                disabled={isLoading}
-              >
-                <option value="yuanbao">元宝模板</option>
-                <option value="summary">摘要模板</option>
-                <option value="coolpapers">酷论文模板</option>
-              </select>
+              <div className="border-t border-gray-100">
+                <select
+                  value={promptName}
+                  onChange={(e) => setPromptName(e.target.value)}
+                  className="w-full px-5 py-3 outline-none border-none bg-gray-50 text-gray-700"
+                  disabled={isLoading}
+                >
+                  <option value="yuanbao">元宝模板</option>
+                  <option value="summary">摘要模板</option>
+                  <option value="coolpapers">酷论文模板</option>
+                </select>
+              </div>
             </div>
             <button 
               type="submit"
-              className="bg-black text-white px-10 py-3 text-lg font-medium"
+              className="bg-black hover:bg-gray-800 text-white px-10 py-4 text-base font-medium transition-colors duration-300 flex items-center justify-center gap-2"
               disabled={isLoading}
             >
               {isLoading ? '分析中...' : '开始分析'}
@@ -100,7 +104,7 @@ const Newsletter = () => {
           variants={SlideUp(0.8)}
           initial="initial"
           whileInView="animate"
-          className="mt-8 p-6 bg-gray-50 rounded-lg w-full max-w-[640px] mx-auto"
+          className="mt-10 p-6 bg-white rounded-xl border border-gray-200 shadow-sm w-full max-w-[700px] mx-auto"
         >
           <ReactMarkdown 
             remarkPlugins={[remarkGfm, remarkMath]}
