@@ -64,7 +64,7 @@ const Newsletter = () => {
         className="!mt-8"
       >
         <form onSubmit={handleSubmit} className="w-full max-w-[640px] mx-auto">
-          <div className="flex flex-col border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 bg-white">
+          <div className="flex flex-col border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 bg-white group">
             <div className="flex-grow">
               <input
                 type="text"
@@ -78,22 +78,29 @@ const Newsletter = () => {
                 <select
                   value={promptName}
                   onChange={(e) => setPromptName(e.target.value)}
-                  className="w-full px-5 py-3 outline-none border-none bg-gray-50 text-gray-700"
+                  className="w-full px-5 py-3 outline-none border-none bg-white text-gray-700 rounded-md shadow-sm transition-all duration-300 cursor-pointer hover:bg-gray-50 focus:ring-2 focus:ring-purple-200"
                   disabled={isLoading}
                 >
                   <option value="yuanbao">元宝模板</option>
                   <option value="summary">摘要模板</option>
                   <option value="coolpapers">酷论文模板</option>
+                  <option value="research">研究综述模板</option>
+                  <option value="critique">批判性分析模板</option>
+                  <option value="technical">技术解析模板</option>
+                  <option value="custom">自定义模板</option>
                 </select>
               </div>
             </div>
-            <button 
+            <motion.button 
               type="submit"
-              className="bg-black hover:bg-gray-800 text-white px-10 py-4 text-base font-medium transition-colors duration-300 flex items-center justify-center gap-2"
+              className="bg-gradient-to-r from-purple-600 to-blue-500 hover:shadow-lg text-white px-10 py-4 text-base font-medium transition-all duration-300 flex items-center justify-center gap-2 rounded-b-xl"
               disabled={isLoading}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
             >
               {isLoading ? '分析中...' : '开始分析'}
-            </button>
+              {!isLoading && <FiArrowRight className="ml-1" />}
+            </motion.button>
           </div>
         </form>
       </motion.div>
