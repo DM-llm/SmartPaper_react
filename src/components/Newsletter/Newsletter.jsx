@@ -9,8 +9,6 @@ import "katex/dist/katex.min.css";
 import { processPaperUrlStream } from "../../services/api.js";
 // 导入图标
 import { FiFileText, FiArrowRight, FiLoader } from "react-icons/fi";
-// 导入自定义下拉框组件
-import Dropdown from "../UI/Dropdown";
 
 const Newsletter = () => {
   const [inputUrl, setInputUrl] = useState('');
@@ -66,32 +64,31 @@ const Newsletter = () => {
         className="!mt-8"
       >
         <form onSubmit={handleSubmit} className="w-full max-w-[640px] mx-auto">
-          <div className="flex flex-col border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 bg-white group">
-            <div className="flex flex-row items-center">
-              <div className="flex-grow">
-                <input
-                  type="text"
-                  value={inputUrl}
-                  onChange={(e) => setInputUrl(e.target.value)}
-                  placeholder="输入arXiv论文URL"
-                  className="w-full px-5 py-4 outline-none border-none text-gray-800"
-                  disabled={isLoading}
-                />
-              </div>
-              <div className="border-l border-gray-100 px-4 py-3 min-w-[200px]">
-                <Dropdown
+          <div className="flex flex-col border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 bg-white group">
+            <div className="flex-grow">
+              <input
+                type="text"
+                value={inputUrl}
+                onChange={(e) => setInputUrl(e.target.value)}
+                placeholder="输入arXiv论文URL"
+                className="w-full px-5 py-4 outline-none border-none text-gray-800"
+                disabled={isLoading}
+              />
+              <div className="border-t border-gray-100">
+                <select
                   value={promptName}
-                  onChange={setPromptName}
+                  onChange={(e) => setPromptName(e.target.value)}
+                  className="w-full px-5 py-3 outline-none border-none bg-white text-gray-700 rounded-md shadow-sm transition-all duration-300 cursor-pointer hover:bg-gray-50 focus:ring-2 focus:ring-purple-200"
                   disabled={isLoading}
-                  options={[
-                    { value: "yuanbao", label: "元宝1" },
-                    { value: "coolpapaers", label: "酷论2" },
-                    { value: "methodology", label: "研究3" },
-                    { value: "results", label: "实验4" },
-                    { value: "contribution", label: "主要5" },
-                    { value: "full_analysis", label: "全面6" }
-                  ]}
-                />
+                >
+                  <option value="yuanbao">元宝模板</option>
+                  <option value="summary">摘要模板</option>
+                  <option value="coolpapers">酷论文模板</option>
+                  <option value="research">研究综述模板</option>
+                  <option value="critique">批判性分析模板</option>
+                  <option value="technical">技术解析模板</option>
+                  <option value="custom">自定义模板</option>
+                </select>
               </div>
             </div>
             <motion.button 
